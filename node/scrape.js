@@ -2,15 +2,17 @@
 const cheerio = require('cheerio');
 const fetch = require('node-fetch');
 const prompt = require('prompt-async');
+const request = require('request');
+const pd = require('pretty-data').pd;
 
 async function scrape(url = null) {
   if (!url) url = await get_prompt();
 
   const response = await fetch(url);
-  const body = await response.body;
-
+  const body = await response.text();  
   const $ = cheerio.load(body);
-  console.log($.html());
+
+  console.log(pd.xml($.html()));
   return;
 }
 
@@ -30,4 +32,18 @@ async function get_prompt() {
   return url;
 }
 
-scrape('https://www.google.com');
+function simpleScrape(url) {
+  request(url, function(err, resp, html) {
+    if (err) {
+      console.error(err);
+      return;
+    }
+
+    const $ = cheerio.load(html);
+    console.log(html);
+  })
+}
+
+// scrape('https://www.google.com');
+scrape();
+// simpleScrape('https://www.google.com');

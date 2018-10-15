@@ -8,6 +8,8 @@
     "cheerio": "^1.0.0-rc.2",
     "express": "^4.16.4",
     "node-fetch": "^2.2.0",
-    "prompt-async": "^0.9.9"
+    "pretty-data": "^0.40.0",
+    "prompt-async": "^0.9.9",
+    "request": "^2.88.0"
   }
 }
