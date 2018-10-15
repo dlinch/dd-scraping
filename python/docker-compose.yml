@@ -1,0 +1,14 @@
+version: '2'
+services:
+  app:
+    container_name: python_scraper
+    build:
+      context: .
+    stdin_open: true
+    tty: true
+    environment:
+      PYTHONPATH: '.'
+    volumes:
+      - .:/app
+    ports:
+      - "8080:8080"
