@@ -2,7 +2,6 @@ const cheerio = require('cheerio');
 const fetch = require('node-fetch');
 const pd = require('pretty-data').pd;
 const prompt = require('prompt-async');
-const urlRegex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/;
 
 async function scrape(url = null) {
   if (!url) url = await get_prompt();
@@ -12,10 +11,11 @@ async function scrape(url = null) {
   const $ = cheerio.load(body);
 
   console.log(pd.xml($.html()));
-  return;
+  // Do something with the data
 }
 
 async function get_prompt() {
+const urlRegex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/;
   const schema = {
     properties: {
       url:  {
@@ -30,7 +30,6 @@ async function get_prompt() {
   const {url} = await prompt.get(schema);
   return url;
 }
-
 
 // scrape('https://www.google.com');
 scrape();
