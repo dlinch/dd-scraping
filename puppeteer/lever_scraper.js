@@ -9,41 +9,37 @@ async function scrape(url) {
     // Spin up browser instance
     const browser = await puppeteer.launch({
       headless: true,
+      args: ['--disable-dev-shm-usage'],
     });
 
     // Navigate to page
     const page = await browser.newPage();
-    await page.goto(url);
+    await page.goto(url, {waitUntil: "networkidle0"});
     // await screenshot(page, 'careers_page');
     // await toPdf(page, 'careers_page');
 
     // Scrape data
-    let data = [];
-    const jobs = page.$$('section.Engineering li.job');
+    await Promise.all([
+      await page.waitForSelector('section.Engineering li.job a:first-of-type'),
+      await page.click('section.Engineering li.job a:first-of-type'),
+    ])
 
-    jobs.forEach(async (job) => {
-      await Promise.all([
-        await page.waitForNavigation(),
-        await job.click(),
-      ]);
-      await screenshot(page, 'job_page');
-      scrapedJob = {};
-      scrapedJob.title = await page.$('div.posting-headline h2').innerText;
-      scrapedJob.location = await page.$('div.posting-categories div.sort-by-time').innerText;
-      scrapedJob.commitment = await page.$('div.posting-categories div.sort-by-commitment').innerText;
-      data.push(scrapedJob);
-      await Promise.all([
-        await page.waitForNavigation(),
-        await page.goBack(),
-      ]);
-    });
+    await page.waitForSelector('div.posting-headline h2');
+    // await screenshot(page, 'job_page');
+    let scrapedJob = {};
+    scrapedJob.title = await page.evaluate(() => document.querySelector('div.posting-headline h2').innerText);
+    scrapedJob.location = await page.evaluate(() => document.querySelector('div.posting-categories div.sort-by-time').innerText);
+    scrapedJob.commitment = await page.evaluate(() => document.querySelector('div.posting-categories div.sort-by-commitment').innerText);
 
     // Save data to csv
-    const csv = parseCSV(data);
-    write(csv);
+    const csv = parseCSV([scrapedJob]);
+    write(csv, 'lever');
     await browser.close();
   } catch (e) {
+    console.error('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     console.error(e)
+    console.error('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+    await browser.close();
   }
 }
 
@@ -55,16 +51,12 @@ async function toPdf(page, name) {
   await page.pdf({path: `${name}.pdf`, format: 'A4'});
 }
 
-function fields() {
-  return [
+function parseCSV(data) {
+  const fields = [
     'title',
     'location',
     'commitment',
   ];
-}
-
-function parseCSV(data) {
-  const fields = fields();
   const opts = { fields };
 
   try {
@@ -75,8 +67,8 @@ function parseCSV(data) {
   }
 }
 
-function write(csv) {
-  const fileLocation = `csv/${this.city}_jobs.csv`;
+function write(csv, name) {
+  const fileLocation = `csv/${name}_jobs.csv`;
   const stream = fs.createWriteStream(fileLocation);
   stream.once('open', function(_fd) {
     stream.write(csv);
