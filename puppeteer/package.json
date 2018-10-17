@@ -1,0 +1,12 @@
+{
+  "name": "puppeter-scraper",
+  "version": "1.0.0",
+  "description": "Show off puppeteer for web scraping.",
+  "main": "index.js",
+  "author": "Derik Linch",
+  "license": "MIT",
+  "dependencies": {
+    "json2csv": "^4.2.1",
+    "puppeteer": "^1.9.0"
+  }
+}
