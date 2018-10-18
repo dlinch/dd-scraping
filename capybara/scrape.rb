@@ -1,5 +1,4 @@
 require 'selenium-webdriver'
-require 'nokogiri'
 require 'capybara'
 
 Capybara.register_driver :selenium do |app|
@@ -32,6 +31,4 @@ job_count.times do |i|
   session.go_back
 end
 
-
 pp data
-

@@ -1,8 +1,6 @@
 const fs = require('fs');
 const puppeteer = require('puppeteer');
 const json2csv = require('json2csv').parse;
-// puppeteer documentation: https://github.com/GoogleChrome/puppeteer/blob/v1.2.0/docs/api.md#pagemainframe
-// json2csv documentation: https://www.npmjs.com/package/json2csv
 
 async function scrape(url) {
   try {
@@ -87,19 +85,3 @@ function write(csv, name) {
 }
 
 scrape('https://www.lever.co/careers');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
