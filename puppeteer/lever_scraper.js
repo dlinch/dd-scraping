@@ -7,8 +7,8 @@ const json2csv = require('json2csv').parse;
 async function scrape(url) {
   try {
     // Spin up browser instance
-    const browser = await puppeteer.launch({
-      headless: true,
+    var browser = await puppeteer.launch({
+      headless: false,
       args: ['--disable-dev-shm-usage'],
     });
 
@@ -36,9 +36,6 @@ async function scrape(url) {
     write(csv, 'lever');
     await browser.close();
   } catch (e) {
-    console.error('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-    console.error(e)
-    console.error('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     await browser.close();
   }
 }
